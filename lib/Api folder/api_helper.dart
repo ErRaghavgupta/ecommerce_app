@@ -6,6 +6,7 @@ import 'package:ecommerce_app/models/CategoryModelFolder/CategoryMainModel.dart'
 import 'package:ecommerce_app/models/Products/MainModel.dart';
 import 'package:ecommerce_app/models/UserModel/RegisterErrorModel.dart';
 import 'package:ecommerce_app/models/UserModel/RegisterModel.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'my_Exception.dart';
 
@@ -91,19 +92,28 @@ class ApiHelper {
     }
   }
 
-  Future<RegisterModel> registerApi(
-      {Map<String, dynamic>? body,  }) async {
+  Future<dynamic> registerApi({
+    Map<String, dynamic>? body,
+    required Widget container,
+  }) async {
     var url = Url.REGISTER_URL;
     try {
-      var response =
-          await http.post(Uri.parse(url), body: body,);
+      var response = await http.post(
+        Uri.parse(url),
+        body: body,
+      );
       print("response  = $response");
       var json = jsonDecode(response.body);
-      returnDataResponse(response);
-      var json2 = jsonDecode(response.body);
-      RegisterErrorModelClass.fromJson(json2);
-      returnDataResponse(response);
-      return RegisterModel.fromJson(json);
+      // returnDataResponse(response);
+      // var json2 = jsonDecode(response.body);
+      // RegisterErrorModelClass.fromJson(json);
+      if (response.statusCode == 200) {
+        return RegisterModel.fromJson(json);
+      } else {
+        return RegisterErrorModelClass.fromJson(json);
+        // return returnDataResponse(response);
+      }
+      // return RegisterModel.fromJson(json);
     } on SocketException {
       throw FetchDataException(body: "Internet Error");
     }
@@ -122,7 +132,7 @@ class ApiHelper {
 
       case 401:
       case 403:
-      throw UserAlreadyRegister(body: res.body.toString());
+        throw UserAlreadyRegister(body: res.body.toString());
 
       case 407:
         throw UnAuthorisedException(body: res.body.toString());

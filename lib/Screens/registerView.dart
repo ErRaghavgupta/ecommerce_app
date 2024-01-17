@@ -1,6 +1,7 @@
 import 'package:ecommerce_app/Api%20folder/api_helper.dart';
 import 'package:ecommerce_app/Screens/loginView.dart';
 import 'package:ecommerce_app/Widgets/Textfield.dart';
+import 'package:ecommerce_app/models/UserModel/RegisterErrorModel.dart';
 import 'package:ecommerce_app/models/UserModel/RegisterModel.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -213,21 +214,18 @@ class _RegisterViewState extends State<RegisterView> {
                                               emailController.text.toString(),
                                           password: passwordController.text
                                               .toString())
-                                      .toJson());
-                              Navigator.push(context, MaterialPageRoute(
-                                builder: (context) {
-                                  return LoginView();
-                                },
-                              ));
+                                      .toJson(), 
+                              container: Navigator.push(context, route)
+                              );
+                                    
+                              
                             });
                           } on UserAlreadyRegister catch (e) {
-
                             print("register uncssss");
-                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                 content: Text(
-                                    "User is Already regsiter : ${e.body}")));
+                                    "User is Already register : ${e.body}")));
                           }
-
                         } else {
                           print("not working");
                         }
