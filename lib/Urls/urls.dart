@@ -6,6 +6,9 @@ class Url {
       '${BASE_URL}products/latest?limit=10&offset=2';
   static const String CATEGORY_URL = "${BASE_URL}categories";
   static const String REGISTER_URL = "${BASE_URL}auth/register";
+  static const String LOGIN_URL = "${BASE_URL}auth/login";
+  static const String ADD_TO_CART = "${BASE_URL}cart/add";
+  static const String CARTLIST = "${BASE_URL}cart";
 
 // https://www.infusevalue.live/api/v1/products/latest?limit=10&offset=2
 
@@ -20,4 +23,6 @@ class Url {
   static String review_image_url = '';
   static String seller_image_url = '';
   static String shop_image_url = '';
+
+// static String id = '';
 }

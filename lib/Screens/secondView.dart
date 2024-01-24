@@ -1,9 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:ecommerce_app/Api%20folder/api_helper.dart';
+import 'package:ecommerce_app/LocalStorage/sharedPreference.dart';
 import 'package:ecommerce_app/Urls/urls.dart';
 import 'package:flutter/material.dart';
-
 import '../Routes/routes.dart';
 
 class SecondView extends StatefulWidget {
@@ -17,6 +17,8 @@ class SecondView extends StatefulWidget {
 
 class _SecondViewState extends State<SecondView> {
   int currentIndex = 0;
+  int count = 1;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -77,8 +79,7 @@ class _SecondViewState extends State<SecondView> {
                             );
                           },
                           options: CarouselOptions(
-                            onPageChanged: (subIndex, reason) {
-                            },
+                            onPageChanged: (subIndex, reason) {},
                             viewportFraction: 1,
                             autoPlayCurve: Curves.fastOutSlowIn,
                             autoPlayAnimationDuration: Duration(seconds: 2),
@@ -93,9 +94,7 @@ class _SecondViewState extends State<SecondView> {
                   options: CarouselOptions(
                     onPageChanged: (index, reason) {
                       currentIndex = index;
-                      setState(() {
-
-                      });
+                      setState(() {});
                     },
                     viewportFraction: 1,
                     autoPlayCurve: Curves.fastOutSlowIn,
@@ -195,18 +194,26 @@ class _SecondViewState extends State<SecondView> {
                 child: Row(
                   children: [
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          if (count > 0) {
+                            count--;
+                          }
+                          setState(() {});
+                        },
                         icon: Icon(
                           Icons.remove,
                           color: Colors.white,
                         )),
                     Text(
-                      "1",
+                      count.toString(),
                       style: TextStyle(
                           fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          count++;
+                          setState(() {});
+                        },
                         icon: Icon(
                           Icons.add,
                           color: Colors.white,
@@ -219,8 +226,20 @@ class _SecondViewState extends State<SecondView> {
                       backgroundColor: Color(0xffff660e),
                       padding:
                           EdgeInsets.symmetric(horizontal: 40, vertical: 15)),
-                  onPressed: () {
-                    Navigator.pushNamed(context, CART_ROUTE);
+                  onPressed: () async {
+                    // print("url id = ${Url.id}");
+
+                    var prefs = await Shared().getPrefs();
+                    print('id ${prefs.getString(Shared.tokenId)!}');
+
+                    setState(() {
+                      ApiHelper().addToCartApi({
+                        "id": widget.id.toString(),
+                        "quantity": count.toString(),
+                      }, prefs.getString(Shared.tokenId)!).then((value) {
+                        Navigator.pushNamed(context, CART_ROUTE);
+                      });
+                    });
                   },
                   child: Text(
                     "Add to Cart",

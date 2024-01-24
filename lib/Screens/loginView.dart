@@ -1,5 +1,10 @@
+import 'package:ecommerce_app/Api%20folder/api_helper.dart';
+import 'package:ecommerce_app/LocalStorage/sharedPreference.dart';
+import 'package:ecommerce_app/Routes/routes.dart';
 import 'package:ecommerce_app/Screens/registerView.dart';
+import 'package:ecommerce_app/Urls/urls.dart';
 import 'package:ecommerce_app/Widgets/Textfield.dart';
+import 'package:ecommerce_app/models/UserModel/loginModel.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -89,7 +94,7 @@ class _LoginViewState extends State<LoginView> {
                   icon: value == false
                       ? Icon(Icons.visibility_off)
                       : Icon(Icons.visibility)),
-              obscureText: value,
+              obscureText: !value,
               labelText: "Password",
               hintText: "Enter a password",
               controller: passwordController,
@@ -136,7 +141,28 @@ class _LoginViewState extends State<LoginView> {
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white, elevation: 5),
-                onPressed: () {},
+                onPressed: () async {
+                  var prefs = await Shared().getPrefs();
+                  // var data = prefs.setString(Shared.tokenId, );
+                  setState(() {
+                    try {
+                      ApiHelper()
+                          .loginApi(LoginModel(
+                                  email: emailController.text,
+                                  password: passwordController.text)
+                              .toJson())
+                          .then((value) {
+                        print("value : ${value["token"]}");
+                        prefs.setString(Shared.tokenId, value['token']);
+                        // data = value["token"];
+                        Navigator.pushNamed(context, CART_ROUTE);
+                      });
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("login unsuccessful $e")));
+                    }
+                  });
+                },
                 child: Text(
                   "Sign in ",
                   textScaleFactor: 1.5,

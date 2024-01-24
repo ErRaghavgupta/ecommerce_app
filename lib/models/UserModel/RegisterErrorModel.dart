@@ -1,9 +1,10 @@
-
 import 'dart:convert';
 
-RegisterErrorModelClass registerErrorModelClassFromJson(String str) => RegisterErrorModelClass.fromJson(json.decode(str));
+RegisterErrorModelClass registerErrorModelClassFromJson(String str) =>
+    RegisterErrorModelClass.fromJson(json.decode(str));
 
-String registerErrorModelClassToJson(RegisterErrorModelClass data) => json.encode(data.toJson());
+String registerErrorModelClassToJson(RegisterErrorModelClass data) =>
+    json.encode(data.toJson());
 
 class RegisterErrorModelClass {
   List<Error>? errors;
@@ -12,13 +13,18 @@ class RegisterErrorModelClass {
     this.errors,
   });
 
-  factory RegisterErrorModelClass.fromJson(Map<String, dynamic> json) => RegisterErrorModelClass(
-    errors: json["errors"] == null ? [] : List<Error>.from(json["errors"]!.map((x) => Error.fromJson(x))),
-  );
+  factory RegisterErrorModelClass.fromJson(Map<String, dynamic> json) =>
+      RegisterErrorModelClass(
+        errors: json["errors"] == null
+            ? []
+            : List<Error>.from(json["errors"]!.map((x) => Error.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-    "errors": errors == null ? [] : List<dynamic>.from(errors!.map((x) => x.toJson())),
-  };
+        "errors": errors == null
+            ? []
+            : List<dynamic>.from(errors!.map((x) => x.toJson())),
+      };
 }
 
 class Error {
@@ -31,12 +37,12 @@ class Error {
   });
 
   factory Error.fromJson(Map<String, dynamic> json) => Error(
-    code: json["code"],
-    message: json["message"],
-  );
+        code: json["code"],
+        message: json["message"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "code": code,
-    "message": message,
-  };
+        "code": code,
+        "message": message,
+      };
 }

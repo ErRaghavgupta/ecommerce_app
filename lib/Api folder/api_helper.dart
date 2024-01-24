@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:ecommerce_app/Urls/urls.dart';
+import 'package:ecommerce_app/models/AddtoCart/addtocart.dart';
 import 'package:ecommerce_app/models/BannerModels/BannerModel.dart';
+import 'package:ecommerce_app/models/CartList/cartList%20Model.dart';
 import 'package:ecommerce_app/models/CategoryModelFolder/CategoryMainModel.dart';
 import 'package:ecommerce_app/models/Products/MainModel.dart';
 import 'package:ecommerce_app/models/UserModel/RegisterErrorModel.dart';
 import 'package:ecommerce_app/models/UserModel/RegisterModel.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:ecommerce_app/models/UserModel/loginModel.dart';
 import 'package:http/http.dart' as http;
 import 'my_Exception.dart';
 
@@ -94,9 +96,9 @@ class ApiHelper {
 
   Future<dynamic> registerApi({
     Map<String, dynamic>? body,
-    required Widget container,
   }) async {
     var url = Url.REGISTER_URL;
+    var data;
     try {
       var response = await http.post(
         Uri.parse(url),
@@ -104,20 +106,114 @@ class ApiHelper {
       );
       print("response  = $response");
       var json = jsonDecode(response.body);
-      // returnDataResponse(response);
-      // var json2 = jsonDecode(response.body);
-      // RegisterErrorModelClass.fromJson(json);
-      if (response.statusCode == 200) {
-        return RegisterModel.fromJson(json);
-      } else {
-        return RegisterErrorModelClass.fromJson(json);
-        // return returnDataResponse(response);
-      }
-      // return RegisterModel.fromJson(json);
+      data = returnDataResponse(response);
+      RegisterModel.fromJson(json);
+      RegisterErrorModelClass.fromJson(json);
     } on SocketException {
       throw FetchDataException(body: "Internet Error");
     }
+    return data;
   }
+
+  // LOGIN API
+  Future<dynamic> loginApi(
+    Map<String, dynamic>? body,
+  ) async {
+    var url = Url.LOGIN_URL;
+    var data;
+    try {
+      var response = await http.post(Uri.parse(url), body: body);
+      var json = jsonDecode(response.body);
+      LoginModel.fromJson(json);
+      data = returnDataResponse(response);
+    } on SocketException {
+      throw FetchDataException(body: "Internet Error");
+    }
+    return data;
+  }
+
+  Future<dynamic> addToCartApi(
+      Map<String, dynamic>? body, String bearerToken) async {
+    var url = Url.ADD_TO_CART;
+    var data;
+    try {
+      var response = await http.post(Uri.parse(url), body: body, headers: {
+        "Authorization": "Bearer $bearerToken",
+      });
+
+      print("Response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        var json = jsonDecode(response.body);
+        AddTOCartModel.fromJson(json);
+        data = returnDataResponse(response);
+      } else {
+        // Handle non-200 status codes
+        print("Non-200 status code: ${response.statusCode}");
+        // You can throw an exception or handle it accordingly
+      }
+    } on SocketException {
+      throw FetchDataException(body: "Internet Error");
+    } catch (e) {
+      print("Error decoding JSON: $e");
+      // Handle JSON decoding errors
+      // You can throw an exception or handle it accordingly
+    }
+    return data;
+  }
+
+// show cartList api
+  Future<List<CartListModel>> getCartListApi(String token) async {
+    var url = Url.CARTLIST;
+    var data;
+    try {
+      var response = await http.get(Uri.parse(url), headers: {
+        "Authorization": "Bearer $token",
+      });
+
+      // Check if the response status code is successful (status code 200)
+      if (response.statusCode == 200) {
+        var json = jsonDecode(response.body);
+        List<CartListModel> cartList = [];
+
+        for (Map<String, dynamic> jsonData in json) {
+          cartList.add(CartListModel.fromJson(jsonData));
+        }
+        print("cartlist = $cartList");
+        data = returnDataResponse(response);
+        return cartList;
+      } else {
+        // If the response status code is not successful, handle it accordingly
+        throw Exception(
+            "Failed to load cart list. Status Code: ${response.statusCode}");
+      }
+    } on SocketException {
+      // If there is a SocketException, handle it by throwing a custom exception
+      throw FetchDataException(body: "Internet Error");
+    }
+    // You might want to handle the case when 'data' is null or return something meaningful.
+  }
+
+  // Future<List<CartListModel>> getCartListApi(String token) async {
+  //   var url = Url.CARTLIST;
+  //   var data;
+  //   try {
+  //     var response = await http.get(Uri.parse(url),headers: {
+  //       "Authorization" : "Bearer $token",
+  //     });
+  //     var json = jsonDecode(response.body);
+  //     List<CartListModel> cartList = [];
+  //     for(Map<String,dynamic> jsonData in json){
+  //       cartList.add(CartListModel.fromJson(jsonData));
+  //     }
+  //     print("cartlist = $cartList");
+  //     data = returnDataResponse(response);
+  //     return cartList;
+  //   } on SocketException {
+  //     throw FetchDataException(body: "Internet Error");
+  //   }
+  //   // return data;
+  // }
 
   static dynamic returnDataResponse(http.Response res) {
     switch (res.statusCode) {
@@ -132,7 +228,10 @@ class ApiHelper {
 
       case 401:
       case 403:
-        throw UserAlreadyRegister(body: res.body.toString());
+        print("Raghav");
+        // var data = jsonDecode(res.body);
+        // return data;
+        throw UserAlreadyRegister(body: res.body);
 
       case 407:
         throw UnAuthorisedException(body: res.body.toString());

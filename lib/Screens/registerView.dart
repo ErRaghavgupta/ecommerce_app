@@ -1,17 +1,12 @@
 import 'package:ecommerce_app/Api%20folder/api_helper.dart';
 import 'package:ecommerce_app/Screens/loginView.dart';
 import 'package:ecommerce_app/Widgets/Textfield.dart';
-import 'package:ecommerce_app/models/UserModel/RegisterErrorModel.dart';
 import 'package:ecommerce_app/models/UserModel/RegisterModel.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-// import 'package:flutter_pw_validator/flutter_pw_validator.dart';
-import '../Api folder/my_Exception.dart';
-
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
-
   @override
   State<RegisterView> createState() => _RegisterViewState();
 }
@@ -191,51 +186,80 @@ class _RegisterViewState extends State<RegisterView> {
                   height: 30,
                 ),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        elevation: 4, backgroundColor: Colors.yellow),
-                    onPressed: () {
-                      if (_formkey.currentState!.validate()) {
-                        if (fistNameController.text != '' &&
-                            emailController.text != "" &&
-                            passwordController.text != '' &&
-                            lastNameController.text != "" &&
-                            phoneController.text != '') {
-                          try {
-                            setState(() {
-                              ApiHelper().registerApi(
-                                  body: RegisterModel(
-                                          f_name: fistNameController.text
-                                              .toString(),
-                                          l_name: lastNameController.text
-                                              .toString(),
-                                          phone:
-                                              phoneController.text.toString(),
-                                          email:
-                                              emailController.text.toString(),
-                                          password: passwordController.text
-                                              .toString())
-                                      .toJson(), 
-                              container: Navigator.push(context, route)
-                              );
-                                    
-                              
-                            });
-                          } on UserAlreadyRegister catch (e) {
-                            print("register uncssss");
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text(
-                                    "User is Already register : ${e.body}")));
-                          }
-                        } else {
-                          print("not working");
-                        }
-                      }
-                    },
-                    child: Text(
-                      "Sign Up",
-                      textScaleFactor: 1.3,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    )),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 4,
+                    backgroundColor: Colors.yellow,
+                  ),
+                  onPressed: () {
+                    if (_formkey.currentState!.validate()) {
+                      registerUser();
+                    }
+                  },
+                  child: Text(
+                    "Sign Up",
+                    textScaleFactor: 1.3,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                // ElevatedButton(
+                //     style: ElevatedButton.styleFrom(
+                //         elevation: 4, backgroundColor: Colors.yellow),
+                //     onPressed: () {
+                //       if (_formkey.currentState!.validate()) {
+                //         if (fistNameController.text != '' &&
+                //             emailController.text != "" &&
+                //             passwordController.text != '' &&
+                //             lastNameController.text != "" &&
+                //             phoneController.text != '') {
+                //           try {
+                //             setState(() {
+                //               ApiHelper()
+                //                   .registerApi(
+                //                 body: RegisterModel(
+                //                         f_name:
+                //                             fistNameController.text.toString(),
+                //                         l_name:
+                //                             lastNameController.text.toString(),
+                //                         phone: phoneController.text.toString(),
+                //                         email: emailController.text.toString(),
+                //                         password:
+                //                             passwordController.text.toString())
+                //                     .toJson(),
+                //               )
+                //                   .then((value) {
+                //                     if(value == null){
+                //                       Navigator.push(context, MaterialPageRoute(
+                //                         builder: (context) {
+                //                           return LoginView();
+                //                         },
+                //                       ));
+                //                     }else{
+                //                       print("register uncssss");
+                //                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                //                           content:
+                //                           Text("User is Already register : ")));
+                //                     }
+                //
+                //               },
+                //
+                //               );
+                //             });
+                //           } catch (e) {
+                //             print("register uncssss");
+                //             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                //                 content:
+                //                     Text("User is Already register : $e")));
+                //           }
+                //         } else {
+                //           print("not working");
+                //         }
+                //       }
+                //     },
+                //     child: Text(
+                //       "Sign Up",
+                //       textScaleFactor: 1.3,
+                //       style: TextStyle(fontWeight: FontWeight.bold),
+                //     )),
                 SizedBox(
                   height: 20,
                 ),
@@ -269,5 +293,71 @@ class _RegisterViewState extends State<RegisterView> {
         ),
       ),
     );
+  }
+
+  void registerUser() async {
+    if (fistNameController.text != '' &&
+        emailController.text != "" &&
+        passwordController.text != '' &&
+        lastNameController.text != "" &&
+        phoneController.text != '') {
+      try {
+        await ApiHelper()
+            .registerApi(
+          body: RegisterModel(
+            f_name: fistNameController.text.toString(),
+            l_name: lastNameController.text.toString(),
+            phone: phoneController.text.toString(),
+            email: emailController.text.toString(),
+            password: passwordController.text.toString(),
+          ).toJson(),
+        )
+            .then((value) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LoginView(),
+              ));
+        }).catchError((error, stackTrace) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                actions: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      "ok",
+                      textScaleFactor: 1.4,
+                    ),
+                  )
+                ],
+                title: SizedBox(
+                  height: 150,
+                  width: 150,
+                  child: Center(
+                    child: Text(
+                      "Email is Already exist",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        });
+      } catch (e) {
+        print("register unsuccessful: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("User registration failed: $e")),
+        );
+      }
+    } else {
+      print("Incomplete user details");
+    }
   }
 }

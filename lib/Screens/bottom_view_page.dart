@@ -1,6 +1,7 @@
 import 'package:ecommerce_app/Routes/routes.dart';
 import 'package:ecommerce_app/Screens/cartView.dart';
 import 'package:ecommerce_app/Screens/firstView.dart';
+import 'package:ecommerce_app/Screens/loginView.dart';
 import 'package:ecommerce_app/Screens/secondView.dart';
 import 'package:flutter/material.dart';
 
@@ -15,8 +16,9 @@ class _BottomViewPageState extends State<BottomViewPage> {
   int selectIndex = 0;
   List listItems = [
     FirstView(),
-    SecondView(),
-    AddToCart()
+    // SecondView(),
+    AddToCart(),
+    LoginView(),
   ];
 
   @override
@@ -34,8 +36,10 @@ class _BottomViewPageState extends State<BottomViewPage> {
         },
         destinations: [
           NavigationDestination(icon: Icon(Icons.home), label: "Home"),
-          NavigationDestination(icon: Icon(Icons.add_shopping_cart), label: "Cart"),
-          NavigationDestination(icon: Icon(Icons.favorite_border), label: "favourite"),
+          NavigationDestination(
+              icon: Icon(Icons.add_shopping_cart), label: "Cart"),
+          // NavigationDestination(
+          //     icon: Icon(Icons.favorite_border), label: "favourite"),
           NavigationDestination(icon: Icon(Icons.person), label: "Login"),
         ],
       ),
