@@ -9,6 +9,7 @@ class Url {
   static const String LOGIN_URL = "${BASE_URL}auth/login";
   static const String ADD_TO_CART = "${BASE_URL}cart/add";
   static const String CARTLIST = "${BASE_URL}cart";
+  static const String COUPONCODE = "${BASE_URL}coupon/apply?code=INDIAWIN";
 
 // https://www.infusevalue.live/api/v1/products/latest?limit=10&offset=2
 

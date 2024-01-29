@@ -156,6 +156,38 @@ class _LoginViewState extends State<LoginView> {
                         prefs.setString(Shared.tokenId, value['token']);
                         // data = value["token"];
                         Navigator.pushNamed(context, CART_ROUTE);
+                      }).catchError((error, stackTrace) {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              actions: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.orange),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text(
+                                    "ok",
+                                    textScaleFactor: 1.4,
+                                  ),
+                                )
+                              ],
+                              title: SizedBox(
+                                height: 150,
+                                width: 150,
+                                child: Center(
+                                  child: Text(
+                                    "Email is Already exist",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
                       });
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(

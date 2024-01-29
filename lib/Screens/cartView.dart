@@ -220,6 +220,7 @@ import 'package:ecommerce_app/Api%20folder/api_helper.dart';
 import 'package:ecommerce_app/LocalStorage/sharedPreference.dart';
 import 'package:ecommerce_app/Urls/urls.dart';
 import 'package:ecommerce_app/Widgets/Textfield.dart';
+import 'package:ecommerce_app/models/CartList/cartList%20Model.dart';
 import 'package:flutter/material.dart';
 
 class AddToCart extends StatefulWidget {
@@ -237,6 +238,8 @@ class _AddToCartState extends State<AddToCart> {
     return prefs.getString(Shared.tokenId);
   }
 
+  List<CartListModel>? myCartModel;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -246,43 +249,61 @@ class _AddToCartState extends State<AddToCart> {
             showModalBottomSheet(
               context: context,
               builder: (context) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Textfield(
-                        suffixIcon:
-                            TextButton(onPressed: () {}, child: Text("Apply")),
-                        labelText: "Enter Discount code",
-                        hintText: "Enter Discount code",
-                        controller: totalController,
-                        textInputAction: TextInputAction.done,
-                        keyboardType: TextInputType.number,
-                        focusNode: FocusNode(),
-                        onSaved: (p0) {},
-                        validator: (p0) {},
+                return ListView.builder(
+                  itemCount: 1,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      height: 350,
+                      // width: 100,
+                      padding: EdgeInsets.all(8),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Textfield(
+                            suffixIcon: TextButton(
+                                onPressed: () {}, child: Text("Apply")),
+                            labelText: "Enter Discount code",
+                            hintText: "Enter Discount code",
+                            controller: totalController,
+                            textInputAction: TextInputAction.done,
+                            keyboardType: TextInputType.number,
+                            focusNode: FocusNode(),
+                            onSaved: (p0) {},
+                            validator: (p0) {},
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [Text("subtotal"), Text("\$245.00")],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "total",
+                                textScaleFactor: 1.3,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                "\$${myCartModel![index].price!}",
+                                textScaleFactor: 1.3,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                          ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xffff660e)),
+                              child: Text(
+                                "Checkout",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ))
+                        ],
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [Text("subtotal"), Text("\$245.00")],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [Text("subtotal"), Text("\$245.00")],
-                      ),
-                      ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xffff660e)),
-                          child: Text(
-                            "Checkout",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ))
-                    ],
-                  ),
+                    );
+                  },
                 );
               },
             );
@@ -318,13 +339,17 @@ class _AddToCartState extends State<AddToCart> {
                       child: CircularProgressIndicator(),
                     );
                   } else if (snapshot.hasError) {
+                    // print("object :${snapshot.data!}");
+                    print("cat : ${snapshot.error.toString()}");
                     print("Error loading cart list: ${snapshot.error}");
                     return Center(
-                      child: Text("Error loading cart list"),
+                      child: Text("Error loading cart list,${snapshot.error}"),
                     );
                   } else if (snapshot.hasData) {
+                    myCartModel = snapshot.data!;
+                    print("cat : ${myCartModel!.length}");
                     return ListView.builder(
-                      itemCount: snapshot.data!.length,
+                      itemCount: myCartModel!.length,
                       itemBuilder: (context, index) {
                         return SizedBox(
                             height: MediaQuery.of(context).size.height * 0.15,
@@ -342,7 +367,7 @@ class _AddToCartState extends State<AddToCart> {
                                         borderRadius: BorderRadius.circular(5),
                                         child: Image.network(
                                           "${Url.product_thumbnail_url}/${snapshot.data![index].thumbnail!}",
-                                          height: 90,
+                                          height: 120,
                                           width: 100,
                                           fit: BoxFit.fill,
                                         ),
@@ -350,8 +375,10 @@ class _AddToCartState extends State<AddToCart> {
                                       SizedBox(
                                         width: 15,
                                       ),
-                                      Container(
-                                        width: 220,
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.52,
                                         height: 100,
                                         child: Column(
                                           crossAxisAlignment:
@@ -359,7 +386,7 @@ class _AddToCartState extends State<AddToCart> {
                                           children: [
                                             Text(
                                               snapshot.data![index].name!,
-                                              textScaleFactor: 1.2,
+                                              textScaleFactor: 1.1,
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
                                               textAlign: TextAlign.justify,
@@ -367,34 +394,28 @@ class _AddToCartState extends State<AddToCart> {
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            Expanded(
-                                              child: Text(
-                                                snapshot.data![index].slug!,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
+                                            Text(
+                                              snapshot.data![index].slug!,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                             Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Text(
-                                                  snapshot.data![index].price!
+                                                  "\$${snapshot.data![index].price!}"
                                                       .toString(),
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 ),
-                                                SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.18,
-                                                ),
                                                 Container(
                                                   padding: EdgeInsets.symmetric(
-                                                      horizontal: 8,
+                                                      horizontal: 4,
                                                       vertical: 2),
                                                   decoration: BoxDecoration(
                                                       borderRadius:
@@ -410,9 +431,6 @@ class _AddToCartState extends State<AddToCart> {
                                                           color: Colors.black,
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
                                                       Text(
                                                         snapshot.data![index]
                                                             .quantity!
@@ -422,9 +440,6 @@ class _AddToCartState extends State<AddToCart> {
                                                                 FontWeight.bold,
                                                             color:
                                                                 Colors.black),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 5,
                                                       ),
                                                       InkWell(
                                                         onTap: () {},

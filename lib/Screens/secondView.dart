@@ -3,13 +3,14 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:ecommerce_app/Api%20folder/api_helper.dart';
 import 'package:ecommerce_app/LocalStorage/sharedPreference.dart';
 import 'package:ecommerce_app/Urls/urls.dart';
+import 'package:ecommerce_app/models/Products/MainModel.dart';
 import 'package:flutter/material.dart';
 import '../Routes/routes.dart';
 
 class SecondView extends StatefulWidget {
-  int? id;
+  int? getIndex;
 
-  SecondView({super.key, this.id});
+  SecondView({super.key, this.getIndex});
 
   @override
   State<SecondView> createState() => _SecondViewState();
@@ -18,7 +19,7 @@ class SecondView extends StatefulWidget {
 class _SecondViewState extends State<SecondView> {
   int currentIndex = 0;
   int count = 1;
-
+    MainProductModel? myModel;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -35,6 +36,7 @@ class _SecondViewState extends State<SecondView> {
               child: Text("Error : ${snapshot.hasError}"),
             );
           } else if (snapshot.hasData) {
+             myModel = snapshot.data!;
             return ListView(
               padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
               shrinkWrap: true,
@@ -59,7 +61,7 @@ class _SecondViewState extends State<SecondView> {
                 CarouselSlider.builder(
                   itemCount: snapshot.data!.products!.length,
                   itemBuilder: (context, index, realIndex) {
-                    var images = snapshot.data!.products![widget.id!].images!;
+                    var images = snapshot.data!.products![widget.getIndex!].images!;
                     // print("url : ${Url.product_image_url}/${images.length}");
 
                     return ListView(
@@ -122,7 +124,7 @@ class _SecondViewState extends State<SecondView> {
                   height: 5,
                 ),
                 Text(
-                  snapshot.data!.products![widget.id!].name!,
+                  snapshot.data!.products![widget.getIndex!].name!,
                   textScaleFactor: 1.5,
                   // overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -131,7 +133,7 @@ class _SecondViewState extends State<SecondView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "\$${snapshot.data!.products![widget.id!].purchasePrice!}",
+                      "\$${snapshot.data!.products![widget.getIndex!].purchasePrice!}",
                       textScaleFactor: 1.5,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
@@ -170,7 +172,7 @@ class _SecondViewState extends State<SecondView> {
                 SizedBox(
                   height: 8,
                 ),
-                Text(snapshot.data!.products![widget.id!].metaDescription!),
+                Text(snapshot.data!.products![widget.getIndex!].metaDescription!),
               ],
             );
           }
@@ -234,7 +236,7 @@ class _SecondViewState extends State<SecondView> {
 
                     setState(() {
                       ApiHelper().addToCartApi({
-                        "id": widget.id.toString(),
+                        "id": myModel!.products![widget.getIndex!].id.toString(),
                         "quantity": count.toString(),
                       }, prefs.getString(Shared.tokenId)!).then((value) {
                         Navigator.pushNamed(context, CART_ROUTE);

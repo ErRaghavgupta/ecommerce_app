@@ -26,7 +26,6 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-       // home: RegisterView(),
       initialRoute: INITIAL_ROUTE,
       onGenerateRoute: (settings) {
         if (settings.name == INITIAL_ROUTE) {
@@ -36,7 +35,7 @@ class MyApp extends StatelessWidget {
         } else if (settings.name == SECOND_ROUTE) {
           final args = settings.arguments as int;
           return MaterialPageRoute(
-            builder: (context) => SecondView(id: args),
+            builder: (context) => SecondView(getIndex: args),
           );
         } else if (settings.name == CART_ROUTE) {
           return MaterialPageRoute(

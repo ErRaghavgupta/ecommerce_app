@@ -1,12 +1,11 @@
-// To parse this JSON data, do
-//
-//     final cartListModel = cartListModelFromJson(jsonString);
-
 import 'dart:convert';
 
-List<CartListModel> cartListModelFromJson(String str) => List<CartListModel>.from(json.decode(str).map((x) => CartListModel.fromJson(x)));
+List<CartListModel> cartListModelFromJson(String str) =>
+    List<CartListModel>.from(
+        json.decode(str).map((x) => CartListModel.fromJson(x)));
 
-String cartListModelToJson(List<CartListModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String cartListModelToJson(List<CartListModel> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class CartListModel {
   int? id;
@@ -16,8 +15,8 @@ class CartListModel {
   String? productType;
   dynamic digitalProductType;
   dynamic color;
-  Choices? choices;
-  Variations? variations;
+  dynamic choices;
+  dynamic variations;
   String? variant;
   int? quantity;
   int? price;
@@ -64,76 +63,81 @@ class CartListModel {
   });
 
   factory CartListModel.fromJson(Map<String, dynamic> json) => CartListModel(
-    id: json["id"],
-    customerId: json["customer_id"],
-    cartGroupId: json["cart_group_id"],
-    productId: json["product_id"],
-    productType: json["product_type"],
-    digitalProductType: json["digital_product_type"],
-    color: json["color"],
-    choices: json["choices"] == null ? null : Choices.fromJson(json["choices"]),
-    variations: json["variations"] == null ? null : Variations.fromJson(json["variations"]),
-    variant: json["variant"],
-    quantity: json["quantity"],
-    price: json["price"],
-    tax: json["tax"]?.toDouble(),
-    discount: json["discount"]?.toDouble(),
-    slug: json["slug"],
-    name: json["name"],
-    thumbnail: json["thumbnail"],
-    sellerId: json["seller_id"],
-    sellerIs: json["seller_is"],
-    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
-    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
-    shopInfo: json["shop_info"],
-    shippingCost: json["shipping_cost"],
-    shippingType: json["shipping_type"],
-    product: json["product"] == null ? null : Product.fromJson(json["product"]),
-  );
+        id: json["id"],
+        customerId: json["customer_id"],
+        cartGroupId: json["cart_group_id"],
+        productId: json["product_id"],
+        productType: json["product_type"],
+        digitalProductType: json["digital_product_type"],
+        color: json["color"],
+        choices: json["choices"],
+        variations: json["variations"],
+        variant: json["variant"],
+        quantity: json["quantity"],
+        price: json["price"],
+        tax: json["tax"]?.toDouble(),
+        discount: json["discount"]?.toDouble(),
+        slug: json["slug"],
+        name: json["name"],
+        thumbnail: json["thumbnail"],
+        sellerId: json["seller_id"],
+        sellerIs: json["seller_is"],
+        createdAt: json["created_at"] == null
+            ? null
+            : DateTime.parse(json["created_at"]),
+        updatedAt: json["updated_at"] == null
+            ? null
+            : DateTime.parse(json["updated_at"]),
+        shopInfo: json["shop_info"],
+        shippingCost: json["shipping_cost"],
+        shippingType: json["shipping_type"],
+        product:
+            json["product"] == null ? null : Product.fromJson(json["product"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "customer_id": customerId,
-    "cart_group_id": cartGroupId,
-    "product_id": productId,
-    "product_type": productType,
-    "digital_product_type": digitalProductType,
-    "color": color,
-    "choices": choices?.toJson(),
-    "variations": variations?.toJson(),
-    "variant": variant,
-    "quantity": quantity,
-    "price": price,
-    "tax": tax,
-    "discount": discount,
-    "slug": slug,
-    "name": name,
-    "thumbnail": thumbnail,
-    "seller_id": sellerId,
-    "seller_is": sellerIs,
-    "created_at": createdAt?.toIso8601String(),
-    "updated_at": updatedAt?.toIso8601String(),
-    "shop_info": shopInfo,
-    "shipping_cost": shippingCost,
-    "shipping_type": shippingType,
-    "product": product?.toJson(),
-  };
+        "id": id,
+        "customer_id": customerId,
+        "cart_group_id": cartGroupId,
+        "product_id": productId,
+        "product_type": productType,
+        "digital_product_type": digitalProductType,
+        "color": color,
+        "choices": choices,
+        "variations": variations,
+        "variant": variant,
+        "quantity": quantity,
+        "price": price,
+        "tax": tax,
+        "discount": discount,
+        "slug": slug,
+        "name": name,
+        "thumbnail": thumbnail,
+        "seller_id": sellerId,
+        "seller_is": sellerIs,
+        "created_at": createdAt?.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
+        "shop_info": shopInfo,
+        "shipping_cost": shippingCost,
+        "shipping_type": shippingType,
+        "product": product?.toJson(),
+      };
 }
 
-class Choices {
+class ChoicesClass {
   dynamic choice2;
 
-  Choices({
+  ChoicesClass({
     this.choice2,
   });
 
-  factory Choices.fromJson(Map<String, dynamic> json) => Choices(
-    choice2: json["choice_2"],
-  );
+  factory ChoicesClass.fromJson(Map<String, dynamic> json) => ChoicesClass(
+        choice2: json["choice_2"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "choice_2": choice2,
-  };
+        "choice_2": choice2,
+      };
 }
 
 class Product {
@@ -160,42 +164,50 @@ class Product {
   });
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
-    id: json["id"],
-    name: json["name"],
-    slug: json["slug"],
-    currentStock: json["current_stock"],
-    minimumOrderQty: json["minimum_order_qty"],
-    reviewsCount: json["reviews_count"],
-    totalCurrentStock: json["total_current_stock"],
-    translations: json["translations"] == null ? [] : List<dynamic>.from(json["translations"]!.map((x) => x)),
-    reviews: json["reviews"] == null ? [] : List<dynamic>.from(json["reviews"]!.map((x) => x)),
-  );
+        id: json["id"],
+        name: json["name"],
+        slug: json["slug"],
+        currentStock: json["current_stock"],
+        minimumOrderQty: json["minimum_order_qty"],
+        reviewsCount: json["reviews_count"],
+        totalCurrentStock: json["total_current_stock"],
+        translations: json["translations"] == null
+            ? []
+            : List<dynamic>.from(json["translations"]!.map((x) => x)),
+        reviews: json["reviews"] == null
+            ? []
+            : List<dynamic>.from(json["reviews"]!.map((x) => x)),
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "slug": slug,
-    "current_stock": currentStock,
-    "minimum_order_qty": minimumOrderQty,
-    "reviews_count": reviewsCount,
-    "total_current_stock": totalCurrentStock,
-    "translations": translations == null ? [] : List<dynamic>.from(translations!.map((x) => x)),
-    "reviews": reviews == null ? [] : List<dynamic>.from(reviews!.map((x) => x)),
-  };
+        "id": id,
+        "name": name,
+        "slug": slug,
+        "current_stock": currentStock,
+        "minimum_order_qty": minimumOrderQty,
+        "reviews_count": reviewsCount,
+        "total_current_stock": totalCurrentStock,
+        "translations": translations == null
+            ? []
+            : List<dynamic>.from(translations!.map((x) => x)),
+        "reviews":
+            reviews == null ? [] : List<dynamic>.from(reviews!.map((x) => x)),
+      };
 }
 
-class Variations {
+class VariationsClass {
   dynamic size;
 
-  Variations({
+  VariationsClass({
     this.size,
   });
 
-  factory Variations.fromJson(Map<String, dynamic> json) => Variations(
-    size: json["size"],
-  );
+  factory VariationsClass.fromJson(Map<String, dynamic> json) =>
+      VariationsClass(
+        size: json["size"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "size": size,
-  };
+        "size": size,
+      };
 }
